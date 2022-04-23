@@ -4,45 +4,56 @@
 #include <string.h>
 #include "raylib.h"
 
-int MAX = 10;
 
-int population = 16;
+/* Cambiar estructuras a structs
+ Clonación
+ Fitness a partir de sobrevivientes, el que tenemos esta feo
+ Visibilidad por resistencia
+ población cambiante*/
+int MAX = 1000;
+
+int population = 8;
 typedef struct
 {
     int x;
     int y;
-}food;
+}pos;
+typedef struct
+{
+
+    int speed;
+    int ID;
+    int visibility;
+    int size;
+    pos cordinate;
+}Specie;
 
 
+Specie createSample(int id);
 
-void createSample(float *arr);
-
-void createPopulation(float **arr);
+void createPopulation(Specie dudearray[]);
 
 void fitness(float **arr);
 
-void printPopulation(float **arr);
+void printPopulation(Specie dudearray[]);
 
 void matingPopulation(float **arr);
 
 void extrapolationCrossover(float **arr);
 
-void createFoodPos(food arr[]);
+void createFoodPos(pos arr[]);
 
 int main() {
     srand(time(NULL));
     InitWindow(500, 500, "The Life");
     SetTargetFPS(10);
     //Aquí empieza nuestra historia
-    float **arr = (float **) malloc(population * sizeof(float *));
-    createPopulation(arr);
-    fitness(arr);
-    matingPopulation(arr);
-    printPopulation(arr);
+    Specie allspecies[100];
+    createPopulation(allspecies);
+
+    printPopulation(allspecies);
     printf("\n");
-    extrapolationCrossover(arr);
-    printPopulation(arr);
-    food comida[population/2];
+    pos comida[population/2];
     createFoodPos(comida);
 
 
@@ -57,15 +68,12 @@ int main() {
 
         for(int i=0;i<population;i++){
 
-            switch((int)arr[i][0]) {
+            switch(allspecies[i].ID) {
                 case 1:
-                    DrawCircle((int)arr[i][5],(int)arr[i][6], 5.5, DARKGREEN);break;
+                    DrawCircle(allspecies[i].cordinate.x,allspecies[i].cordinate.y, 5.5, DARKGREEN);break;
                 case 2:
-                    DrawCircle((int)arr[i][5],(int)arr[i][6], 5.5, DARKBLUE);break;
-                case 3:
-                    DrawCircle((int)arr[i][5],(int)arr[i][6], 5.5, (Color){0,25 ,67,123});break;
-                case 4:
-                    DrawCircle((int)arr[i][5],(int)arr[i][6], 5.5, PURPLE);break;
+                    DrawCircle(allspecies[i].cordinate.x,allspecies[i].cordinate.y, 5.5, DARKBLUE);break;
+
             }
 
             for(int j=0;j<=population/2;j++){
@@ -82,44 +90,36 @@ int main() {
 
     CloseWindow();
 
-    for (int i = 0; i < population; i++)
-        free(arr[i]);
-
-    free(arr);
 
 
     return 0;
 }
+//
 //Aquí se crea todos los valores de una especie
-void createSample(float *arr) {
+Specie createSample(int id){
 
-    for (int gen = 1; gen < 4; gen++) {
-        arr[gen] = (float) rand() / (float) (RAND_MAX / MAX);
-
-    }
-    //Agrega los valores de la posición de las especies en
-    arr[5]=(float )(rand() % (490-10+1)+10);
-    arr[6]=(float )(rand() % (490-10+1)+10);
-
+    Specie dude;
+    dude.ID=id;
+    dude.speed=(int) rand() / (int) (RAND_MAX / MAX);
+    dude.visibility=(int) rand() / (int) (RAND_MAX / MAX);
+    dude.size=(int) rand() / (int) (RAND_MAX / MAX);
+    dude.cordinate.x=rand() % (490-10+1)+10;
+    dude.cordinate.y=rand() % (490-10+1)+10;
+    return dude;
 }
 
-void createPopulation(float **arr) {
-    for (int i = 0; i < population; i++) {
-        arr[i] = (float *) malloc(7 * sizeof(float));
-        createSample(arr[i]);
-    }
-    int max=4;
-    int j=0;
-    int cons=1;
-    for(int i=0;i<4;i++){
-        for (j;j<max;j++){
-            arr[j][0]=(float)cons;
+void createPopulation(Specie dudearray[]) {
+
+    for (int i = 0; i <population ; i++) {
+        if (i%2){
+            dudearray[i] = createSample(1) ;
         }
-        max+=4;
-        cons+=1;
+        else{
+            dudearray[i] = createSample(2);
+        }
+
 
     }
-
 
 }
 
@@ -129,10 +129,9 @@ void fitness(float **arr) {
     }
 }
 
-void printPopulation(float **arr) {
+void printPopulation(Specie dudearray[]) {
     for (int i = 0; i < population; i++) {
-        for (int j = 0; j < 7; j++)
-            printf("%f ", arr[i][j]);
+        printf("%d,%d,%d,%d,%d,%d", dudearray[i].ID,dudearray[i].speed,dudearray[i].visibility,dudearray[i].size,dudearray[i].cordinate.x,dudearray[i].cordinate.y);
         printf("\n");
     }
 
@@ -179,7 +178,7 @@ void extrapolationCrossover(float **arr) {
     fitness(arr);
 }
 
-void createFoodPos(food arr[])
+void createFoodPos(pos arr[])
 {
     for(int i=0;i<=population/2;i++)
     {
@@ -192,4 +191,3 @@ void createFoodPos(food arr[])
 
 
 }
-
