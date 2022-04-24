@@ -20,9 +20,9 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
 endif()
 
 # Our Project
-file(COPY ${PROJECT_SOURCE_DIR}/Assets DESTINATION ${PROJECT_BINARY_DIR})
 
-add_executable(${PROJECT_NAME} main.c)
+
+add_executable(${PROJECT_NAME} main.c movement.h)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 

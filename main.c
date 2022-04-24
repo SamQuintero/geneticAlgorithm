@@ -3,6 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include "raylib.h"
+#include <math.h>
 
 
 /* Cambiar estructuras a structs
@@ -10,7 +11,7 @@
  Fitness a partir de sobrevivientes, el que tenemos esta feo
  Visibilidad por resistencia
  población cambiante*/
-int MAX = 1000;
+int MAX = 100;
 
 int population = 8;
 typedef struct
@@ -26,6 +27,7 @@ typedef struct
     int visibility;
     int size;
     pos cordinate;
+    pos closestFood;
 }Specie;
 
 
@@ -42,19 +44,24 @@ void matingPopulation(float **arr);
 void extrapolationCrossover(float **arr);
 
 void createFoodPos(pos arr[]);
+pos findFood(pos dude, pos comida[]);
+void addClosestFood(Specie array[],pos comida[]);
 
 int main() {
     srand(time(NULL));
-    InitWindow(500, 500, "The Life");
+    InitWindow(1300, 600, "The Life");
     SetTargetFPS(10);
     //Aquí empieza nuestra historia
     Specie allspecies[100];
-    createPopulation(allspecies);
 
-    printPopulation(allspecies);
-    printf("\n");
+    createPopulation(allspecies);
     pos comida[population/2];
     createFoodPos(comida);
+    addClosestFood(allspecies,comida);
+    printPopulation(allspecies);
+    printf("\n");
+
+
 
 
 
@@ -70,9 +77,9 @@ int main() {
 
             switch(allspecies[i].ID) {
                 case 1:
-                    DrawCircle(allspecies[i].cordinate.x,allspecies[i].cordinate.y, 5.5, DARKGREEN);break;
+                    DrawCircle(allspecies[i].cordinate.x,allspecies[i].cordinate.y, allspecies[i].size/2, DARKGREEN);break;
                 case 2:
-                    DrawCircle(allspecies[i].cordinate.x,allspecies[i].cordinate.y, 5.5, DARKBLUE);break;
+                    DrawCircle(allspecies[i].cordinate.x,allspecies[i].cordinate.y, allspecies[i].size/2, DARKBLUE);break;
 
             }
 
@@ -102,20 +109,31 @@ Specie createSample(int id){
     dude.ID=id;
     dude.speed=(int) rand() / (int) (RAND_MAX / MAX);
     dude.visibility=(int) rand() / (int) (RAND_MAX / MAX);
-    dude.size=(int) rand() / (int) (RAND_MAX / MAX);
-    dude.cordinate.x=rand() % (490-10+1)+10;
-    dude.cordinate.y=rand() % (490-10+1)+10;
+    dude.size=rand() % (20-11+1)+11;
+
+
     return dude;
 }
-
+void addClosestFood(Specie array[],pos comida[]){
+    for(int i=0;i<population;i++){
+        array[i].closestFood= findFood(array[i].cordinate,comida);
+    }
+}
 void createPopulation(Specie dudearray[]) {
+    Specie dude1=createSample(1);
+    Specie dude2=createSample(2);
 
     for (int i = 0; i <population ; i++) {
+
         if (i%2){
-            dudearray[i] = createSample(1) ;
+            dudearray[i] = dude1 ;
+            dudearray[i].cordinate.x=rand() % (490-10+1)+10;
+            dudearray[i].cordinate.y=rand() % (490-10+1)+10;
         }
         else{
-            dudearray[i] = createSample(2);
+            dudearray[i] = dude2;
+            dudearray[i].cordinate.x=rand() % (490-10+1)+10;
+            dudearray[i].cordinate.y=rand() % (490-10+1)+10;
         }
 
 
@@ -124,14 +142,12 @@ void createPopulation(Specie dudearray[]) {
 }
 
 void fitness(float **arr) {
-    for (int sample = 0; sample < population; sample++) {
-        arr[sample][4] = arr[sample][1] + arr[sample][2] - arr[sample][3];
-    }
+
 }
 
 void printPopulation(Specie dudearray[]) {
     for (int i = 0; i < population; i++) {
-        printf("%d,%d,%d,%d,%d,%d", dudearray[i].ID,dudearray[i].speed,dudearray[i].visibility,dudearray[i].size,dudearray[i].cordinate.x,dudearray[i].cordinate.y);
+        printf("%d,%d,%d,%d,%d,%d,%d,%d", dudearray[i].ID,dudearray[i].speed,dudearray[i].visibility,dudearray[i].size,dudearray[i].cordinate.x,dudearray[i].cordinate.y,dudearray[i].closestFood.x,dudearray[i].closestFood.y);
         printf("\n");
     }
 
@@ -190,4 +206,19 @@ void createFoodPos(pos arr[])
 
 
 
+}
+pos findFood(pos dude, pos comida[]){
+    float distance;
+    float mindistance=10000000;
+    pos closestFood;
+
+    for(int i=0;i<=population/2;i++){
+        distance= abs(sqrt(pow((comida[i].x-dude.x),2)+pow((comida[i].y-dude.y),2)));
+        if(mindistance>distance){
+            mindistance=distance;
+            closestFood.x=comida[i].x;
+            closestFood.y=comida[i].y;
+        }
+    }
+return closestFood;
 }
