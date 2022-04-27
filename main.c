@@ -26,8 +26,10 @@ typedef struct {
     int visibility;
     int size;
     int fat;
+    int direction;
     pos cordinate;
     pos closestFood;
+
 } Specie;
 
 
@@ -48,6 +50,8 @@ void addClosestFood(Specie array[], pos comida[]);
 int checkIsRadious(Specie allSpecies[], pos comida[]);
 
 void Collision(Specie allSpecies[], pos comida[]);
+
+Specie outBounders(Specie dude);
 
 Specie moveTowardsFood();
 
@@ -78,10 +82,9 @@ int main() {
         }
         checkIsRadious(allspecies, comida);
         Collision(allspecies, comida);
+        printf("\n");
 
     }while(amountFood > 0);
-
-
 
 
     while (!WindowShouldClose()) {
@@ -123,10 +126,10 @@ Specie createSample(int id) {
 
     Specie dude;
     dude.ID = id;
-    dude.speed = (int) rand() / (int) (RAND_MAX / 10);
+    dude.speed = rand() % (20 - 5 + 1) + 5;
     dude.visibility = (int) rand() / (int) (RAND_MAX / MAX);
     dude.size = rand() % (20 - 11 + 1) + 11;
-
+    dude.fat=0;
     return dude;
 }
 
@@ -156,9 +159,9 @@ void createPopulation(Specie dudearray[]) {
 
 void printPopulation(Specie dudearray[]) {
     for (int i = 0; i < population; i++) {
-        printf("%d,%d,%d,%d,%d,%d,%d,%d", dudearray[i].ID, dudearray[i].speed, dudearray[i].visibility,
+        printf("%d,%d,%d,%d,%d,%d,%d,%d,%d", dudearray[i].ID, dudearray[i].speed, dudearray[i].visibility,
                dudearray[i].size, dudearray[i].cordinate.x, dudearray[i].cordinate.y, dudearray[i].closestFood.x,
-               dudearray[i].closestFood.y);
+               dudearray[i].closestFood.y,dudearray[i].fat);
         printf("\n");
     }
 
@@ -189,7 +192,7 @@ pos findFood(pos dude, pos comida[]) {
     }
     return closestFood;
 }
-
+//Esta función detecta en que cuadrante esta la comida más cercana a la celula y si esta dentro de su ramgo se dirige a ella, si no la mueve de forma random
 int checkIsRadious(Specie allSpecies[], pos comida[]) {
     int differenceX;
     int differenceY;
@@ -209,7 +212,9 @@ int checkIsRadious(Specie allSpecies[], pos comida[]) {
             if (differenceX <= allSpecies[i].closestFood.x && additionY >= allSpecies[i].closestFood.y) {
                 printf("%d ", i);
                 printf("Move left down\n");
-                allSpecies[i] = moveTowardsFood(allSpecies[i], 1);
+                allSpecies[i].direction=1;
+                allSpecies[i]=outBounders(allSpecies[i]);
+                allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
                 if(allSpecies[i].cordinate.x < allSpecies[i].closestFood.x){
                     allSpecies[i].cordinate.x = allSpecies[i].closestFood.x;
                 }
@@ -217,9 +222,10 @@ int checkIsRadious(Specie allSpecies[], pos comida[]) {
                     allSpecies[i].cordinate.y = allSpecies[i].closestFood.y;
                 }
             } else {
-                option = (rand() % (4 - 1 + 1) + 1);
-                printf("%d %d\n", i, option);
-                allSpecies[i] = moveTowardsFood(allSpecies[i], option);
+                allSpecies[i].direction= (rand() % (4 - 1 + 1) + 1);
+                printf("%d %d\n", i, allSpecies[i].direction);
+                allSpecies[i]=outBounders(allSpecies[i]);
+                allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
             }
         }
         //Case 2, left up
@@ -228,7 +234,9 @@ int checkIsRadious(Specie allSpecies[], pos comida[]) {
             if (differenceX <= allSpecies[i].closestFood.x && differenceY <= allSpecies[i].closestFood.y) {
                 printf("%d ", i);
                 printf("Move left up\n");
-                allSpecies[i] =moveTowardsFood(allSpecies[i], 2);
+                allSpecies[i].direction=2;
+                allSpecies[i]=outBounders(allSpecies[i]);
+                allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
                 if(allSpecies[i].cordinate.x < allSpecies[i].closestFood.x){
                     allSpecies[i].cordinate.x = allSpecies[i].closestFood.x;
                 }
@@ -236,9 +244,10 @@ int checkIsRadious(Specie allSpecies[], pos comida[]) {
                     allSpecies[i].cordinate.y = allSpecies[i].closestFood.y;
                 }
             } else {
-                option = (rand() % (4 - 1 + 1) + 1);
-                printf("%d %d\n", i, option);
-                allSpecies[i] = moveTowardsFood(allSpecies[i], option);
+                allSpecies[i].direction= (rand() % (4 - 1 + 1) + 1);
+                printf("%d %d\n", i, allSpecies[i].direction);
+                allSpecies[i]=outBounders(allSpecies[i]);
+                allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
             }
         }
         //Case 3, right down
@@ -247,7 +256,9 @@ int checkIsRadious(Specie allSpecies[], pos comida[]) {
             if (additionX >= allSpecies[i].closestFood.x && additionY >= allSpecies[i].closestFood.y) {
                 printf("%d ", i);
                 printf("Move right down\n");
-                allSpecies[i] = moveTowardsFood(allSpecies[i], 3);
+                allSpecies[i].direction=3;
+                allSpecies[i]=outBounders(allSpecies[i]);
+                allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
                 if(allSpecies[i].cordinate.x > allSpecies[i].closestFood.x){
                     allSpecies[i].cordinate.x = allSpecies[i].closestFood.x;
                 }
@@ -255,9 +266,10 @@ int checkIsRadious(Specie allSpecies[], pos comida[]) {
                     allSpecies[i].cordinate.y = allSpecies[i].closestFood.y;
                 }
             } else {
-                option = (rand() % (4 - 1 + 1) + 1);
-                printf("%d %d\n", i, option);
-                allSpecies[i] = moveTowardsFood(allSpecies[i], option);
+                allSpecies[i].direction= (rand() % (4 - 1 + 1) + 1);
+                printf("%d %d\n", i, allSpecies[i].direction);
+                allSpecies[i]=outBounders(allSpecies[i]);
+                allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
             }
         }
         //Case 4, right up
@@ -266,7 +278,11 @@ int checkIsRadious(Specie allSpecies[], pos comida[]) {
             if (additionX >= allSpecies[i].closestFood.x && differenceY <= allSpecies[i].closestFood.y) {
                 printf("%d ", i);
                 printf("Move right up");
-                allSpecies[i] = moveTowardsFood(allSpecies[i], 4);
+                allSpecies[i].direction=4;
+                allSpecies[i]=outBounders(allSpecies[i]);
+                allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
+
+
                 if(allSpecies[i].cordinate.x > allSpecies[i].closestFood.x){
                     allSpecies[i].cordinate.x = allSpecies[i].closestFood.x;
                 }
@@ -274,9 +290,10 @@ int checkIsRadious(Specie allSpecies[], pos comida[]) {
                     allSpecies[i].cordinate.y = allSpecies[i].closestFood.y;
                 }
             } else {
-                option = (rand() % (4 - 1 + 1) + 1);
-                printf("%d %d\n", i, option);
-                allSpecies[i] = moveTowardsFood(allSpecies[i], option);
+                allSpecies[i].direction= (rand() % (4 - 1 + 1) + 1);
+                printf("%d %d\n", i, allSpecies[i].direction);
+                allSpecies[i]=outBounders(allSpecies[i]);
+                allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
             }
         }
     }
@@ -314,15 +331,35 @@ void Collision(Specie allSpecies[], pos comida[]){
         {
             for(int j = 0; j < population/2; j++){
                 if(comida[j].x == allSpecies[i].cordinate.x && comida[j].y == allSpecies[i].cordinate.y){
-                    comida[j].x = -190;
-                    comida[j].y = -290;
+                    comida[j].x = -1900;
+                    comida[j].y = -2900;
+                    allSpecies[i].fat+=1;
                 }
-                printf("%d, %d", comida[j].x, comida[j].y);
+                printf("[%d, %d]", comida[j].x, comida[j].y);
             }
         }
     }
 }
 
+Specie outBounders(Specie dude){
+    Specie dudeprueba= moveTowardsFood(dude, dude.direction);
+    if(dudeprueba.cordinate.x<0 || dudeprueba.cordinate.x>1300 || dudeprueba.cordinate.y<0 || dudeprueba.cordinate.y>600){
+        switch (dude.direction) {
+            case 1:
+                dude.direction=4;break;
 
+            case 2:
+                dude.direction=3;break;
 
+            case 3:
+                dude.direction=2;break;
+
+            case 4:
+                dude.direction=1;break;
+
+        }
+    }
+
+    return dude;
+}
 
