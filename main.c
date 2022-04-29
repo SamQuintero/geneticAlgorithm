@@ -6,7 +6,7 @@
 #include <math.h>
 
 
-/* Cambiar estructuras a structs
+/*
  Clonación
  Fitness a partir de sobrevivientes, el que tenemos esta feo
  Visibilidad por resistencia
@@ -14,11 +14,17 @@
 int MAX = 100;
 
 
-int population = 8;
+int population = 12;
+int foodInMap= 10;
 typedef struct {
     int x;
     int y;
 } pos;
+
+typedef struct {
+    pos cordinate;
+    int size;
+} food;
 typedef struct {
 
     int speed;
@@ -41,29 +47,33 @@ void fitness(float **arr);
 
 void printPopulation(Specie dudearray[]);
 
-void createFoodPos(pos arr[]);
+void createFoodPos(food arr[]);
 
-pos findFood(pos dude, pos comida[]);
+pos findFood(pos dude, food comida[]);
 
-void addClosestFood(Specie array[], pos comida[]);
+void addClosestFood(Specie array[], food comida[]);
 
-int checkIsRadious(Specie allSpecies[], pos comida[]);
+int checkIsRadious(Specie allSpecies[], food comida[]);
 
-void Collision(Specie allSpecies[], pos comida[]);
+void Collision(Specie allSpecies[], food comida[]);
 
 Specie outBounders(Specie dude);
 
-Specie moveTowardsFood();
+Specie moveTowardsFood(Specie specie, int direction);
+
+void killSpecie(Specie allSpcies[]);
+
+void quantityOfFood(food comida[], int amountOfFood[1]);
 
 int main() {
     srand(time(NULL));
     InitWindow(1300, 600, "The Life");
-    SetTargetFPS(10);
+    SetTargetFPS(4);
     //Aquí empieza nuestra historia
     Specie allspecies[100];
-
+    int amountOfFood[1]={0};
     createPopulation(allspecies);
-    pos comida[population / 2];
+    food comida[foodInMap];
     createFoodPos(comida);
     printf("\n");
     //checkIsRadious(allspecies, comida);
@@ -72,45 +82,42 @@ int main() {
 
     //Somos un fracaso
     //Pendiente
- int amountFood = 0;
-    do {
-        amountFood = 0;
-        for (int i = 0; i < population / 2; i++) {
-            if (comida[i].x > 0 && comida[i].y > 0) {
-                amountFood++;
-            }
-        }
-        checkIsRadious(allspecies, comida);
-        Collision(allspecies, comida);
-        printf("\n");
-
-    }while(amountFood > 0);
 
 
     while (!WindowShouldClose()) {
 
-        BeginDrawing();
+
         //DrawTexture(idle, 250,250,WHITE);
         ClearBackground(WHITE);
 
-        for (int i = 0; i < population; i++) {
 
-            switch (allspecies[i].ID) {
-                case 1:
-                    DrawCircle(allspecies[i].cordinate.x, allspecies[i].cordinate.y, allspecies[i].size / 2, DARKGREEN);
-                    break;
-                case 2:
-                    DrawCircle(allspecies[i].cordinate.x, allspecies[i].cordinate.y, allspecies[i].size / 2, DARKBLUE);
-                    break;
+            SetTargetFPS(4);
+            BeginDrawing();
+            //dibuja la comida
+            for (int j = 0; j < foodInMap; j++) {
+                DrawCircle(comida[j].cordinate.x, comida[j].cordinate.y, 5.5, RED);
             }
-
-            for (int j = 0; j <= population / 2; j++) {
-                DrawCircle(comida[j].x, comida[j].y, 5.5, (Color) {170, 119, 0, 50});
+            //quantityOfFood(comida,amountOfFood);
+            checkIsRadious(allspecies, comida);
+            Collision(allspecies, comida);
+            for (int i = 0; i < population; i++) {
+                switch (allspecies[i].ID) {
+                    case 1:
+                        DrawCircle(allspecies[i].cordinate.x, allspecies[i].cordinate.y, allspecies[i].size / 2,
+                                   DARKGREEN);
+                        break;
+                    case 2:
+                        DrawCircle(allspecies[i].cordinate.x, allspecies[i].cordinate.y, allspecies[i].size / 2,
+                                   DARKBLUE);
+                        break;
+                }
             }
+            printf("\n");
 
-        }
+        /*if(amountOfFood[0]==foodInMap){
+            killSpecie(allspecies);
 
-        DrawCircle(-1, -1,  5.5, ORANGE);
+        }*/
 
         EndDrawing();
     }
@@ -127,13 +134,13 @@ Specie createSample(int id) {
     Specie dude;
     dude.ID = id;
     dude.speed = rand() % (20 - 5 + 1) + 5;
-    dude.visibility = (int) rand() / (int) (RAND_MAX / MAX);
+    dude.visibility = rand() % (500 - 20 + 1) + 20;
     dude.size = rand() % (20 - 11 + 1) + 11;
     dude.fat=0;
     return dude;
 }
 
-void addClosestFood(Specie array[], pos comida[]) {
+void addClosestFood(Specie array[], food comida[]) {
     for (int i = 0; i < population; i++) {
         array[i].closestFood = findFood(array[i].cordinate, comida);
     }
@@ -167,33 +174,34 @@ void printPopulation(Specie dudearray[]) {
 
 }
 
-void createFoodPos(pos arr[]) {
-    for (int i = 0; i <= population / 2; i++) {
-        arr[i].x = rand() % (490 - 10 + 1) + 10;
+void createFoodPos(food arr[]) {
+    for (int i = 0; i < foodInMap; i++) {
+        arr[i].cordinate.x = rand() % (490 - 10 + 1) + 10;
 
-        arr[i].y = rand() % (490 - 10 + 1) + 10;
-        printf("%d %d\n", arr[i].x, arr[i].y);
+        arr[i].cordinate.y = rand() % (490 - 10 + 1) + 10;
+        printf("%d %d\n", arr[i].cordinate.x, arr[i].cordinate.y);
+        arr[i].size=0;
     }
 
 }
 
-pos findFood(pos dude, pos comida[]) {
+pos findFood(pos dude, food comida[]) {
     float distance;
     float mindistance = 10000000;
     pos closestFood;
 
-    for (int i = 0; i <= population / 2; i++) {
-        distance = abs(sqrt(pow((comida[i].x - dude.x), 2) + pow((comida[i].y - dude.y), 2)));
+    for (int i = 0; i < foodInMap; i++) {
+        distance = abs(sqrt(pow((comida[i].cordinate.x - dude.x), 2) + pow((comida[i].cordinate.y - dude.y), 2)));
         if (mindistance > distance) {
             mindistance = distance;
-            closestFood.x = comida[i].x;
-            closestFood.y = comida[i].y;
+            closestFood.x = comida[i].cordinate.x;
+            closestFood.y = comida[i].cordinate.y;
         }
     }
     return closestFood;
 }
 //Esta función detecta en que cuadrante esta la comida más cercana a la celula y si esta dentro de su ramgo se dirige a ella, si no la mueve de forma random
-int checkIsRadious(Specie allSpecies[], pos comida[]) {
+int checkIsRadious(Specie allSpecies[], food comida[]) {
     int differenceX;
     int differenceY;
     int additionX;
@@ -324,18 +332,18 @@ Specie moveTowardsFood(Specie specie, int direction) {
     return specie;
 }
 
-void Collision(Specie allSpecies[], pos comida[]){
+void Collision(Specie allSpecies[], food comida[]){
 
     for(int i=0;  i < population; i++){
         if(allSpecies[i].cordinate.x == allSpecies[i].closestFood.x && allSpecies[i].cordinate.y == allSpecies[i].closestFood.y)
         {
-            for(int j = 0; j < population/2; j++){
-                if(comida[j].x == allSpecies[i].cordinate.x && comida[j].y == allSpecies[i].cordinate.y){
-                    comida[j].x = -1900;
-                    comida[j].y = -2900;
+            for(int j = 0; j < foodInMap; j++){
+                if(comida[j].cordinate.x == allSpecies[i].cordinate.x && comida[j].cordinate.y == allSpecies[i].cordinate.y){
+                    comida[j].cordinate.x = -1900;
+                    comida[j].cordinate.y = -2900;
                     allSpecies[i].fat+=1;
                 }
-                printf("[%d, %d]", comida[j].x, comida[j].y);
+                printf("[%d, %d]", comida[j].cordinate.x, comida[j].cordinate.y);
             }
         }
     }
@@ -363,3 +371,14 @@ Specie outBounders(Specie dude){
     return dude;
 }
 
+void killSpecie(Specie allSpcies[]){
+
+}
+void quantityOfFood(food comida[], int amountOfFood[1]){
+    for (int i = 0; i < foodInMap; i++) {
+        if (comida[i].cordinate.x < 0 && comida[i].cordinate.y < 0) {
+            amountOfFood[0]++;
+        }
+    }
+
+}
