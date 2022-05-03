@@ -33,7 +33,6 @@ typedef struct {
     int size;
     int fat;
     int direction;
-    int life;
     pos cordinate;
     pos closestFood;
 
@@ -105,6 +104,7 @@ int main() {
             //dibuja la comida
             int amountOfFood=quantityOfFood(comida);
             printf("\n comida %d\n",amountOfFood);
+            printf("\n map %d", foodInMap);
             for (int j = 0; j < foodInMap; j++) {
                 DrawCircle(comida[j].cordinate.x, comida[j].cordinate.y, comida[j].size, RED);
             }
@@ -121,16 +121,17 @@ int main() {
                         DrawCircle(allspecies[i].cordinate.x, allspecies[i].cordinate.y, allspecies[i].size / 2,
                                    DARKBLUE);
                         break;
+                    default:
+                        printf("Adios");
                 }
             }
             printf("\n");
 
         if(amountOfFood==foodInMap){
             killSpecie(allspecies);
-            graveyard(allspecies);
             AsexualReproduction(allspecies);
             createFoodPos(comida);
-
+            printf("%d", population);
 
         }
 
@@ -390,11 +391,10 @@ void killSpecie(Specie allSpcies[]){
     for(int i=0; i<population;i++){
         if (allSpcies[i].fat==0){
             allSpcies[i].ID=3;
-            allSpcies[i].life=0;
         }
     }
-
 }
+
 //Para saber si aun queda comida dentro del mapa
 int quantityOfFood(food comida[]){
     int contador=0;
@@ -432,19 +432,20 @@ int graveyard(Specie allSpecies[]) {
 void AsexualReproduction(Specie allSpecies[]){
     int survivor= graveyard(allSpecies);
     int oldies=survivor;
+
     for (int i=0; i<oldies;i++){
         if(allSpecies[i].fat>1){
-            allSpecies[i].fat=0;
             allSpecies[survivor]=allSpecies[i];
             survivor++;
         }
     }
+    for(int i=0;i< population;i++){
+        allSpecies[i].fat=0;
+    }
     population=survivor;
     assignPos(allSpecies);
-
-
-
     }
+
 void assignPos(Specie allSpecies[]){
     for (int i = 0; i < population; i++){
     allSpecies[i].cordinate.x = rand() % (490 - 10 + 1) + 10;
