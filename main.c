@@ -34,7 +34,7 @@ typedef struct {
     int fat;
     int direction;
     pos cordinate;
-    pos closestFood;
+    food closestFood;
 
 } Specie;
 
@@ -49,7 +49,7 @@ void printPopulation(Specie dudearray[]);
 
 void createFoodPos(food arr[]);
 
-pos findFood(pos dude, food comida[]);
+food findFood(pos dude, food comida[]);
 
 void addClosestFood(Specie array[], food comida[]);
 
@@ -106,7 +106,7 @@ int main() {
             printf("\n comida %d\n",amountOfFood);
             printf("\n map %d", foodInMap);
             for (int j = 0; j < foodInMap; j++) {
-                DrawCircle(comida[j].cordinate.x, comida[j].cordinate.y, comida[j].size, RED);
+                DrawCircle(comida[j].cordinate.x, comida[j].cordinate.y, comida[j].size/2, RED);
             }
 
             checkIsRadious(allspecies, comida);
@@ -170,21 +170,21 @@ void createPopulation(Specie dudearray[]) {
 
         if (i % 2) {
             dudearray[i] = dude1;
-            dudearray[i].cordinate.x = rand() % (490 - 10 + 1) + 10;
-            dudearray[i].cordinate.y = rand() % (490 - 10 + 1) + 10;
+            dudearray[i].cordinate.x = rand() % (1200 - 20 + 1) + 20;
+            dudearray[i].cordinate.y = rand() % (440 - 20 + 1) + 20;
         } else {
             dudearray[i] = dude2;
-            dudearray[i].cordinate.x = rand() % (490 - 10 + 1) + 10;
-            dudearray[i].cordinate.y = rand() % (490 - 10 + 1) + 10;
+            dudearray[i].cordinate.x = rand() % (1200 - 20 + 1) + 20;
+            dudearray[i].cordinate.y = rand() % (440 - 20 + 1) + 20;
         }
     }
 }
 
 void printPopulation(Specie dudearray[]) {
     for (int i = 0; i < population; i++) {
-        printf("%d,%d,%d,%d,%d,%d,%d,%d,%d", dudearray[i].ID, dudearray[i].speed, dudearray[i].visibility,
-               dudearray[i].size, dudearray[i].cordinate.x, dudearray[i].cordinate.y, dudearray[i].closestFood.x,
-               dudearray[i].closestFood.y,dudearray[i].fat);
+        printf("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", dudearray[i].ID, dudearray[i].speed, dudearray[i].visibility,
+               dudearray[i].size, dudearray[i].cordinate.x, dudearray[i].cordinate.y, dudearray[i].closestFood.cordinate.x,
+               dudearray[i].closestFood.cordinate.y,dudearray[i].fat, dudearray[i].closestFood.size);
         printf("\n");
     }
 
@@ -192,26 +192,27 @@ void printPopulation(Specie dudearray[]) {
 //
 void createFoodPos(food arr[]) {
     for (int i = 0; i < foodInMap; i++) {
-        arr[i].cordinate.x = rand() % (490 - 10 + 1) + 10;
+        arr[i].cordinate.x = rand() % (1200 - 20 + 1) + 20;
 
-        arr[i].cordinate.y = rand() % (490 - 10 + 1) + 10;
+        arr[i].cordinate.y = rand() % (440 - 20 + 1) + 20;
         printf("%d %d\n", arr[i].cordinate.x, arr[i].cordinate.y);
         arr[i].size=rand() % (20- 5 + 1) + 5;
     }
 
 }
 //Encuentra la comida más cerca de la celula
-pos findFood(pos dude, food comida[]) {
+food findFood(pos dude, food comida[]) {
     float distance;
     float mindistance = 10000000;
-    pos closestFood;
+    food closestFood;
 
     for (int i = 0; i < foodInMap; i++) {
         distance = abs(sqrt(pow((comida[i].cordinate.x - dude.x), 2) + pow((comida[i].cordinate.y - dude.y), 2)));
         if (mindistance > distance) {
             mindistance = distance;
-            closestFood.x = comida[i].cordinate.x;
-            closestFood.y = comida[i].cordinate.y;
+            closestFood.cordinate.x = comida[i].cordinate.x;
+            closestFood.cordinate.y = comida[i].cordinate.y;
+            closestFood.size = comida[i].size;
         }
     }
     return closestFood;
@@ -231,19 +232,19 @@ int checkIsRadious(Specie allSpecies[], food comida[]) {
         additionX = allSpecies[i].cordinate.x + allSpecies[i].visibility;
         additionY = allSpecies[i].cordinate.y + allSpecies[i].visibility;
         //Case 1, left down
-        if (allSpecies[i].closestFood.x <= allSpecies[i].cordinate.x &&
-            allSpecies[i].closestFood.y >= allSpecies[i].cordinate.y) {
-            if (differenceX <= allSpecies[i].closestFood.x && additionY >= allSpecies[i].closestFood.y) {
+        if (allSpecies[i].closestFood.cordinate.x <= allSpecies[i].cordinate.x &&
+            allSpecies[i].closestFood.cordinate.y >= allSpecies[i].cordinate.y) {
+            if (differenceX <= allSpecies[i].closestFood.cordinate.x && additionY >= allSpecies[i].closestFood.cordinate.y && allSpecies[i].size >= allSpecies[i].closestFood.size) {
                 printf("%d ", i);
                 printf("Move left down\n");
                 allSpecies[i].direction=1;
                 allSpecies[i]=outBounders(allSpecies[i]);
                 allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
-                if(allSpecies[i].cordinate.x < allSpecies[i].closestFood.x){
-                    allSpecies[i].cordinate.x = allSpecies[i].closestFood.x;
+                if(allSpecies[i].cordinate.x < allSpecies[i].closestFood.cordinate.x){
+                    allSpecies[i].cordinate.x = allSpecies[i].closestFood.cordinate.x;
                 }
-                if(allSpecies[i].cordinate.y > allSpecies[i].closestFood.y){
-                    allSpecies[i].cordinate.y = allSpecies[i].closestFood.y;
+                if(allSpecies[i].cordinate.y > allSpecies[i].closestFood.cordinate.y){
+                    allSpecies[i].cordinate.y = allSpecies[i].closestFood.cordinate.y;
                 }
             } else {
                 allSpecies[i].direction= (rand() % (4 - 1 + 1) + 1);
@@ -253,19 +254,19 @@ int checkIsRadious(Specie allSpecies[], food comida[]) {
             }
         }
         //Case 2, left up
-        else if (allSpecies[i].closestFood.x <= allSpecies[i].cordinate.x &&
-            allSpecies[i].closestFood.y <= allSpecies[i].cordinate.y) {
-            if (differenceX <= allSpecies[i].closestFood.x && differenceY <= allSpecies[i].closestFood.y) {
+        else if (allSpecies[i].closestFood.cordinate.x <= allSpecies[i].cordinate.x &&
+            allSpecies[i].closestFood.cordinate.y <= allSpecies[i].cordinate.y) {
+            if (differenceX <= allSpecies[i].closestFood.cordinate.x && differenceY <= allSpecies[i].closestFood.cordinate.y && allSpecies[i].size >= allSpecies[i].closestFood.size) {
                 printf("%d ", i);
                 printf("Move left up\n");
                 allSpecies[i].direction=2;
                 allSpecies[i]=outBounders(allSpecies[i]);
                 allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
-                if(allSpecies[i].cordinate.x < allSpecies[i].closestFood.x){
-                    allSpecies[i].cordinate.x = allSpecies[i].closestFood.x;
+                if(allSpecies[i].cordinate.x < allSpecies[i].closestFood.cordinate.x){
+                    allSpecies[i].cordinate.x = allSpecies[i].closestFood.cordinate.x;
                 }
-                if(allSpecies[i].cordinate.y < allSpecies[i].closestFood.y){
-                    allSpecies[i].cordinate.y = allSpecies[i].closestFood.y;
+                if(allSpecies[i].cordinate.y < allSpecies[i].closestFood.cordinate.y){
+                    allSpecies[i].cordinate.y = allSpecies[i].closestFood.cordinate.y;
                 }
             } else {
                 allSpecies[i].direction= (rand() % (4 - 1 + 1) + 1);
@@ -275,19 +276,19 @@ int checkIsRadious(Specie allSpecies[], food comida[]) {
             }
         }
         //Case 3, right down
-        else if (allSpecies[i].closestFood.x >= allSpecies[i].cordinate.x &&
-            allSpecies[i].closestFood.y >= allSpecies[i].cordinate.y) {
-            if (additionX >= allSpecies[i].closestFood.x && additionY >= allSpecies[i].closestFood.y) {
+        else if (allSpecies[i].closestFood.cordinate.x >= allSpecies[i].cordinate.x &&
+            allSpecies[i].closestFood.cordinate.y >= allSpecies[i].cordinate.y) {
+            if (additionX >= allSpecies[i].closestFood.cordinate.x && additionY >= allSpecies[i].closestFood.cordinate.y && allSpecies[i].size >= allSpecies[i].closestFood.size) {
                 printf("%d ", i);
                 printf("Move right down\n");
                 allSpecies[i].direction=3;
                 allSpecies[i]=outBounders(allSpecies[i]);
                 allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
-                if(allSpecies[i].cordinate.x > allSpecies[i].closestFood.x){
-                    allSpecies[i].cordinate.x = allSpecies[i].closestFood.x;
+                if(allSpecies[i].cordinate.x > allSpecies[i].closestFood.cordinate.x){
+                    allSpecies[i].cordinate.x = allSpecies[i].closestFood.cordinate.x;
                 }
-                if(allSpecies[i].cordinate.y > allSpecies[i].closestFood.y){
-                    allSpecies[i].cordinate.y = allSpecies[i].closestFood.y;
+                if(allSpecies[i].cordinate.y > allSpecies[i].closestFood.cordinate.y){
+                    allSpecies[i].cordinate.y = allSpecies[i].closestFood.cordinate.y;
                 }
             } else {
                 allSpecies[i].direction= (rand() % (4 - 1 + 1) + 1);
@@ -297,9 +298,9 @@ int checkIsRadious(Specie allSpecies[], food comida[]) {
             }
         }
         //Case 4, right up
-        else if (allSpecies[i].closestFood.x >= allSpecies[i].cordinate.x &&
-            allSpecies[i].closestFood.y <= allSpecies[i].cordinate.y) {
-            if (additionX >= allSpecies[i].closestFood.x && differenceY <= allSpecies[i].closestFood.y) {
+        else if (allSpecies[i].closestFood.cordinate.x >= allSpecies[i].cordinate.x &&
+            allSpecies[i].closestFood.cordinate.y <= allSpecies[i].cordinate.y) {
+            if (additionX >= allSpecies[i].closestFood.cordinate.x && differenceY <= allSpecies[i].closestFood.cordinate.y && allSpecies[i].size >= allSpecies[i].closestFood.size) {
                 printf("%d ", i);
                 printf("Move right up");
                 allSpecies[i].direction=4;
@@ -307,11 +308,11 @@ int checkIsRadious(Specie allSpecies[], food comida[]) {
                 allSpecies[i] = moveTowardsFood(allSpecies[i], allSpecies[i].direction);
 
 
-                if(allSpecies[i].cordinate.x > allSpecies[i].closestFood.x){
-                    allSpecies[i].cordinate.x = allSpecies[i].closestFood.x;
+                if(allSpecies[i].cordinate.x > allSpecies[i].closestFood.cordinate.x){
+                    allSpecies[i].cordinate.x = allSpecies[i].closestFood.cordinate.x;
                 }
-                if(allSpecies[i].cordinate.y < allSpecies[i].closestFood.y){
-                    allSpecies[i].cordinate.y = allSpecies[i].closestFood.y;
+                if(allSpecies[i].cordinate.y < allSpecies[i].closestFood.cordinate.y){
+                    allSpecies[i].cordinate.y = allSpecies[i].closestFood.cordinate.y;
                 }
             } else {
                 allSpecies[i].direction= (rand() % (4 - 1 + 1) + 1);
@@ -351,7 +352,7 @@ Specie moveTowardsFood(Specie specie, int direction) {
 void Collision(Specie allSpecies[], food comida[]){
 
     for(int i=0;  i < population; i++){
-        if(allSpecies[i].cordinate.x == allSpecies[i].closestFood.x && allSpecies[i].cordinate.y == allSpecies[i].closestFood.y)
+        if(allSpecies[i].cordinate.x == allSpecies[i].closestFood.cordinate.x && allSpecies[i].cordinate.y == allSpecies[i].closestFood.cordinate.y)
         {
             for(int j = 0; j < foodInMap; j++){
                 if(comida[j].cordinate.x == allSpecies[i].cordinate.x && comida[j].cordinate.y == allSpecies[i].cordinate.y){
