@@ -78,7 +78,7 @@ void mutation(Specie allSpecies[], int oldies);
 int main() {
     srand(time(NULL));
     InitWindow(1300, 600, "The Life");
-    SetTargetFPS(4);
+    SetTargetFPS(20);
     InitAudioDevice();
     //Aquí empieza nuestra historia
     Specie allspecies[100];
@@ -96,6 +96,11 @@ int main() {
     PlayMusicStream(musiquita);
     while (!WindowShouldClose()) {
 
+        float volumen = 1.0;
+
+        PlayMusicStream(musiquita);
+        SetMusicVolume(musiquita,volumen);
+        UpdateMusicStream(musiquita);
 
 
         //DrawTexture(idle, 250,250,WHITE);
