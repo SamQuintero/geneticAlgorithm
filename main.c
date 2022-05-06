@@ -7,9 +7,7 @@
 
 
 /*
- Clonación
- Fitness a partir de sobrevivientes, el que tenemos esta feo
- Visibilidad por resistencia
+
  población cambiante*/
 int MAX = 100;
 
@@ -47,7 +45,9 @@ void fitness(float **arr);
 
 void printPopulation(Specie dudearray[]);
 
-void createFoodPos(food arr[]);
+int maxSizeSpecies(Specie allSpecies[]);
+
+void createFoodPos(food arr[], int maxsize);
 
 food findFood(pos dude, food comida[]);
 
@@ -72,27 +72,30 @@ int graveyard(Specie allSpecies[]);
 
 void assignPos(Specie allSpecies[]);
 
+void mutation(Specie allSpecies[], int oldies);
+
 
 int main() {
     srand(time(NULL));
     InitWindow(1300, 600, "The Life");
     SetTargetFPS(4);
+    InitAudioDevice();
     //Aquí empieza nuestra historia
     Specie allspecies[100];
 
     createPopulation(allspecies);
+    int maxSize= maxSizeSpecies(allspecies);
     food comida[foodInMap];
-    createFoodPos(comida);
+    createFoodPos(comida,maxSize);
     printf("\n");
-    //checkIsRadious(allspecies, comida);
-    //printPopulation(allspecies);
+    Texture2D cookie= LoadTexture("../Assets/cookie.png");
+    Music musiquita=LoadMusicStream("../Assets/MusiquitaChila.mp3");
 
 
     //Somos un fracaso
-    //Pendiente
-
-
+    PlayMusicStream(musiquita);
     while (!WindowShouldClose()) {
+
 
 
         //DrawTexture(idle, 250,250,WHITE);
@@ -130,13 +133,15 @@ int main() {
         if(amountOfFood==foodInMap){
             killSpecie(allspecies);
             AsexualReproduction(allspecies);
-            createFoodPos(comida);
+            createFoodPos(comida, maxSize);
             printf("%d", population);
 
         }
 
         EndDrawing();
     }
+    UnloadMusicStream(musiquita);
+    CloseAudioDevice();
 
     CloseWindow();
 
@@ -178,8 +183,14 @@ void createPopulation(Specie dudearray[]) {
             dudearray[i].cordinate.y = rand() % (440 - 20 + 1) + 20;
         }
     }
-}
 
+}
+int maxSizeSpecies(Specie allSpecies[]){
+    if(allSpecies[0].size>allSpecies[1].size )
+        return allSpecies[0].size;
+    if(allSpecies[0].size<allSpecies[1].size )
+        return allSpecies[1].size;
+}
 void printPopulation(Specie dudearray[]) {
     for (int i = 0; i < population; i++) {
         printf("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", dudearray[i].ID, dudearray[i].speed, dudearray[i].visibility,
@@ -190,13 +201,14 @@ void printPopulation(Specie dudearray[]) {
 
 }
 //
-void createFoodPos(food arr[]) {
+void createFoodPos(food arr[], int maxsize) {
     for (int i = 0; i < foodInMap; i++) {
         arr[i].cordinate.x = rand() % (1200 - 20 + 1) + 20;
 
         arr[i].cordinate.y = rand() % (440 - 20 + 1) + 20;
         printf("%d %d\n", arr[i].cordinate.x, arr[i].cordinate.y);
-        arr[i].size=rand() % (20- 5 + 1) + 5;
+        arr[i].size=rand() % (maxsize- 5 + 1) + 5;
+
     }
 
 }
@@ -444,13 +456,42 @@ void AsexualReproduction(Specie allSpecies[]){
         allSpecies[i].fat=0;
     }
     population=survivor;
+    printf(":(");
     assignPos(allSpecies);
+    printf(":(");
+    mutation(allSpecies, oldies);
+
     }
 
 void assignPos(Specie allSpecies[]){
     for (int i = 0; i < population; i++){
-    allSpecies[i].cordinate.x = rand() % (490 - 10 + 1) + 10;
-    allSpecies[i].cordinate.y = rand() % (490 - 10 + 1) + 10;
+    allSpecies[i].cordinate.x = rand() % (1200 - 10 + 1) + 10;
+    allSpecies[i].cordinate.y = rand() % (440 - 10 + 1) + 10;
     }
+
+}
+void mutation(Specie allSpecies[], int oldies){
+    for (int i = oldies; i <population ; ++i) {
+        int probability=rand() % (3 - 1 + 1) + 1;
+        printf("probabilidad %d",probability);
+        if(probability==2){
+            int whosechanging=rand() % (4 - 1 + 1) + 1;
+
+            switch (whosechanging){
+                case 2:
+                    allSpecies[i].speed+=10;
+                    break;
+                case 3:
+                    allSpecies[i].visibility+=10;
+                    break;
+                case 4:
+                    allSpecies[i].size+=10;
+                    break;
+            }
+
+        }
+
+    }
+
 
 }
