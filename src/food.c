@@ -1,8 +1,9 @@
 #include <stdlib.h>
-#include "../food.h"
+#include "../headers/food.h"
+#include "../headers/globals.h"
 
 
-int MAP_FOOD=30;
+int MAP_FOOD=40;
 void createFoodPos(food arr[], int maxsize) {
     for (int i = 0; i < MAP_FOOD; i++) {
         arr[i].coordinate.x = rand() % (1200 - 40 + 1) + 40;

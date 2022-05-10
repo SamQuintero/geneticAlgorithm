@@ -2,12 +2,13 @@
 // Created by Benjamin Vergara on 2022/05/09.
 //
 
-#include "../specie.h"
+#include "../headers/specie.h"
 #include "stdlib.h"
+#include "../headers/globals.h"
 
 
 
-int POPULATION = 50;
+int POPULATION = 80;
 //Aquí se crea todos los valores de una especie
 Specie createSample(int id) {
 
