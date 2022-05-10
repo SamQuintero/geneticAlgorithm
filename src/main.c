@@ -31,6 +31,8 @@ void assignPos(Specie allSpecies[]);
 
 void mutation(Specie allSpecies[], int oldies);
 
+int endOfWorld(Specie allSpecies[]);
+
 
 int main() {
     srand(time(NULL));
@@ -49,7 +51,7 @@ int main() {
 
 
     InitWindow(1300, 600, "The Life");
-    SetTargetFPS(10);
+    SetTargetFPS(20);
     InitAudioDevice();
     Music musiquita = LoadMusicStream("../Assets/pou.mp3");
     Image cookie = LoadImage("../Assets/cookie4.png");
@@ -112,6 +114,10 @@ int main() {
             createFoodPos(comida, maxSize);
             printf("%d", POPULATION);
         }
+        int a= endOfWorld(allspecies);
+        if(a>70){
+            CloseWindow();
+        }
 
         EndDrawing();
     }
@@ -169,7 +175,7 @@ int checkIsRadious(Specie allSpecies[], food comida[]) {
     int additionY;
     int option = 0;
     addClosestFood(allSpecies, comida);
-   // printPopulation(allSpecies);
+   printPopulation(allSpecies);
     for (int i = 0; i < POPULATION; i++) {
         differenceX = allSpecies[i].coordinate.x - allSpecies[i].visibility;
         differenceY = allSpecies[i].coordinate.y - allSpecies[i].visibility;
@@ -439,4 +445,14 @@ void mutation(Specie allSpecies[], int oldies) {
         }
 
     }
+}
+int endOfWorld(Specie allSpecies[]){
+    int max=0;
+    for (int i=0;i<POPULATION;i++){
+        if (allSpecies[i].size>max){
+            max=allSpecies[i].size;
+        }
+
+    }
+    return max;
 }
