@@ -22,7 +22,7 @@ endif()
 # Our Project
 
 
-add_executable(${PROJECT_NAME} main.c movement.h)
+add_executable(${PROJECT_NAME} src/main.c src/food.c food.h globals.h src/specie.c specie.h)
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 
