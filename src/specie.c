@@ -23,14 +23,23 @@ Specie createSample(int id) {
 void createPopulation(Specie dudearray[]) {
     Specie dude1 = createSample(1);
     Specie dude2 = createSample(2);
+    Specie dude4 = createSample(4);
 
-    for (int i = 0; i < POPULATION; i++) {
+    for (int i = 0; i < POPULATION; i++) { //1,2
 
-        if (i % 2) {
+        if (i % 4) {
             dudearray[i] = dude1;
             dudearray[i].coordinate.x = rand() % (1200 - 20 + 1) + 20;
             dudearray[i].coordinate.y = rand() % (440 - 20 + 1) + 20;
-        } else {
+
+        }
+        else if (i % 3) {
+            dudearray[i] = dude4;
+            dudearray[i].coordinate.x = rand() % (1200 - 20 + 1) + 20;
+            dudearray[i].coordinate.y = rand() % (440 - 20 + 1) + 20;
+
+        }
+        else {
             dudearray[i] = dude2;
             dudearray[i].coordinate.x = rand() % (1200 - 20 + 1) + 20;
             dudearray[i].coordinate.y = rand() % (440 - 20 + 1) + 20;
@@ -39,12 +48,11 @@ void createPopulation(Specie dudearray[]) {
 
 }
 
-int maxSizeSpecies(Specie allSpecies[]) {
-    int max = 0;
+int meanSizeSpecies(Specie allSpecies[]) {
+    int mid = 0;
     for(int i = 0; i < POPULATION; i++){
-        if(allSpecies[i].size > max){
-            max = allSpecies[i].size;
+        mid+=allSpecies[i].size;
         }
-    }
-    return max;
+
+    return mid/POPULATION;
 }

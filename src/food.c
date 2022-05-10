@@ -1,14 +1,15 @@
 #include <stdlib.h>
 #include "../food.h"
 
-int MAP_FOOD = 20;
+
+int MAP_FOOD=30;
 void createFoodPos(food arr[], int maxsize) {
     for (int i = 0; i < MAP_FOOD; i++) {
         arr[i].coordinate.x = rand() % (1200 - 40 + 1) + 40;
 
         arr[i].coordinate.y = rand() % (400 - 40 + 1) + 40;
         printf("%d %d\n", arr[i].coordinate.x, arr[i].coordinate.y);
-        arr[i].size=rand() % (maxsize- 5 + 1) + 5;
+        arr[i].size=rand() % ((maxsize-2)- 5 + 1) + 5;
 
     }
 }

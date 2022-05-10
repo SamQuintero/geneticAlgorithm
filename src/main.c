@@ -34,8 +34,8 @@ void mutation(Specie allSpecies[], int oldies);
 
 int main() {
     srand(time(NULL));
-    MAP_FOOD = 20;
-    POPULATION = 50;
+    MAP_FOOD = 30;
+    POPULATION = 80;
 
     int maxSize;
     int amountOfFood;
@@ -44,19 +44,18 @@ int main() {
     food comida[MAP_FOOD];
 
     createPopulation(allspecies);
-    maxSize = maxSizeSpecies(allspecies);
+    maxSize = meanSizeSpecies(allspecies);
     createFoodPos(comida, maxSize);
 
 
     InitWindow(1300, 600, "The Life");
-    SetTargetFPS(20);
+    SetTargetFPS(10);
     InitAudioDevice();
-    Music musiquita = LoadMusicStream("../Assets/pou.mpeg");
+    Music musiquita = LoadMusicStream("../Assets/pou.mp3");
     Image cookie = LoadImage("../Assets/cookie4.png");
     ImageResize(&cookie, 100, 100);
     UnloadImage(cookie);
     Texture2D texture = LoadTextureFromImage(cookie);
-
 
     PlayMusicStream(musiquita);
     while (!WindowShouldClose()) {
@@ -67,7 +66,8 @@ int main() {
         SetMusicVolume(musiquita, volumen);
         UpdateMusicStream(musiquita);
 
-        ClearBackground(WHITE);
+        ClearBackground(BLACK);
+
         BeginDrawing();
 
 
@@ -85,25 +85,29 @@ int main() {
             switch (allspecies[i].ID) {
                 case 1:
                     DrawCircle(allspecies[i].coordinate.x, allspecies[i].coordinate.y, allspecies[i].size / 2,
-                               DARKGREEN);
+                               PINK);
                     break;
                 case 2:
                     DrawCircle(allspecies[i].coordinate.x, allspecies[i].coordinate.y, allspecies[i].size / 2,
-                               DARKBLUE);
+                               BLUE);
+                    break;
+                case 4:
+                    DrawCircle(allspecies[i].coordinate.x, allspecies[i].coordinate.y, allspecies[i].size / 2,
+                               GREEN);
                     break;
                 default:
-                    printf("Adios");
+                    printf(":)");
             }
         }
         printf("\n");
         countFrames++;
-
+        // Detecta cuando se acaba la comida o el periodo generacional para matar a las especies tontas
         if (amountOfFood == MAP_FOOD || countFrames > 70) {
             countFrames = 0;
             printf("Frames %d \n", countFrames);
             killSpecie(allspecies);
             AsexualReproduction(allspecies);
-            maxSize = maxSizeSpecies(allspecies);
+            maxSize = meanSizeSpecies(allspecies);
             printf("Max %d: ", maxSize);
             createFoodPos(comida, maxSize);
             printf("%d", POPULATION);
@@ -165,7 +169,7 @@ int checkIsRadious(Specie allSpecies[], food comida[]) {
     int additionY;
     int option = 0;
     addClosestFood(allSpecies, comida);
-    printPopulation(allSpecies);
+   // printPopulation(allSpecies);
     for (int i = 0; i < POPULATION; i++) {
         differenceX = allSpecies[i].coordinate.x - allSpecies[i].visibility;
         differenceY = allSpecies[i].coordinate.y - allSpecies[i].visibility;
@@ -319,7 +323,7 @@ void Collision(Specie allSpecies[], food comida[]) {
                     comida[j].coordinate.y = -2900;
                     allSpecies[i].fat += 1;
                 }
-                printf("[%d, %d]", comida[j].coordinate.x, comida[j].coordinate.y);
+
             }
         }
     }
@@ -356,7 +360,7 @@ Specie outBounders(Specie dude) {
 void killSpecie(Specie allSpcies[]) {
     for (int i = 0; i < POPULATION; i++) {
         if (allSpcies[i].fat == 0) {
-            allSpcies[i].ID = 3;
+            allSpcies[i].ID = 666;
         }
     }
 }
@@ -377,7 +381,7 @@ int graveyard(Specie allSpecies[]) {
     }
     int count = 0;
     for (int r = 0; r < POPULATION; r++) {
-        if (allSpecies[r].ID != 3) {
+        if (allSpecies[r].ID != 666) {
             count++;
         }
     }

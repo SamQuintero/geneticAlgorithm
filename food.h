@@ -1,6 +1,7 @@
 #ifndef MAIN_C_FOOD_H
 #define MAIN_C_FOOD_H
 
+
 #include "stdio.h"
 
 typedef struct {

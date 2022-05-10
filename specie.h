@@ -23,6 +23,6 @@ typedef struct {
 
 Specie createSample(int id);
 void createPopulation(Specie dudearray[]);
-int maxSizeSpecies(Specie allSpecies[]);
+int meanSizeSpecies(Specie allSpecies[]);
 
 #endif //MAIN_C_SPECIE_H
