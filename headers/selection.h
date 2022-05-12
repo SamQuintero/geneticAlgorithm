@@ -14,5 +14,6 @@ int graveyard(Specie allSpecies[]);
 void assignPos(Specie allSpecies[]);
 void mutation(Specie allSpecies[], int oldies);
 int endOfWorld(Specie allSpecies[]);
+int survivingSpecie(Specie allSpecies[]);
 
 #endif //MAIN_C_SELECTION_H

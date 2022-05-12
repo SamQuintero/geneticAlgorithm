@@ -6,9 +6,8 @@
 #include "../headers/globals.h"
 
 
-//void printPopulation(Specie dudearray[]);
-
 int main() {
+
     srand(time(NULL));
 
     int maxSize;
@@ -24,7 +23,7 @@ int main() {
 
 
     InitWindow(1300, 600, "The Life");
-    SetTargetFPS(100);
+    SetTargetFPS(20);
 
     InitAudioDevice();
     Music musiquita = LoadMusicStream("../Assets/pou.mp3");
@@ -88,28 +87,18 @@ int main() {
             printf("%d", POPULATION);
         }
         extinction = endOfWorld(allspecies);
-        if(extinction>=70){
+        if(extinction>=70 && survivingSpecie(allspecies) == 0){
             UnloadTexture(texture);
             UnloadMusicStream(musiquita);
             CloseAudioDevice();
             CloseWindow();
             return 0;
         }
-
         EndDrawing();
     }
     return 0;
 }
 
 
-/*void printPopulation(Specie dudearray[]) {
-    for (int i = 0; i < POPULATION; i++) {
-        printf("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", dudearray[i].ID, dudearray[i].speed, dudearray[i].visibility,
-               dudearray[i].size, dudearray[i].coordinate.x, dudearray[i].coordinate.y,
-               dudearray[i].closestFood.coordinate.x,
-               dudearray[i].closestFood.coordinate.y, dudearray[i].fat, dudearray[i].closestFood.size);
-        printf("\n");
-    }
 
-}*/
 
