@@ -6,10 +6,11 @@
 #define MAIN_C_MOVEMENT_H
 #include "specie.h"
 
-int checkIsRadious(Specie allSpecies[], food comida[]);
+void checkIsRadious(Specie allSpecies[], food comida[]);
 void addClosestFood(Specie array[], food comida[]);
 food findFood(pos dude, food comida[]);
-Specie outBounders(Specie dude);
+Specie outBoundaries(Specie specie);
 Specie moveTowardsFood(Specie specie, int direction);
+void printPopulation(Specie allSpecies[]);
 
 #endif //MAIN_C_MOVEMENT_H
