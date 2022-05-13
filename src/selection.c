@@ -10,7 +10,6 @@
 void Collision(Specie allSpecies[], food comida[]) {
 
     for (int i = 0; i < POPULATION; i++) {
-        printf("This is the extension %d %d %d\n", i, allSpecies[i].size/2, allSpecies[i].coordinate.x + allSpecies[i].size/2);
         if (allSpecies[i].coordinate.x == allSpecies[i].closestFood.coordinate.x &&
             allSpecies[i].coordinate.y == allSpecies[i].closestFood.coordinate.y ||
             allSpecies[i].coordinate.x - allSpecies[i].size/2  <= allSpecies[i].closestFood.coordinate.x &&
@@ -58,9 +57,7 @@ void AsexualReproduction(Specie allSpecies[]) {
         allSpecies[i].fat = 0;
     }
     POPULATION = survivor;
-    printf(":(");
     assignPos(allSpecies);
-    printf(":(");
     mutation(allSpecies, oldies);
 
 }

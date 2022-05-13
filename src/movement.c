@@ -170,6 +170,7 @@ food findFood(pos dude, food comida[]) {
  * the opposite direction. 
  */
 Specie outBoundaries(Specie specie) {
+    //A test specie is used to check if when moving it truly gets out of range
     Specie testSpecie = moveTowardsFood(specie, specie.direction);
     if (testSpecie.coordinate.x < 0 || testSpecie.coordinate.x > 1300 || testSpecie.coordinate.y < 0 ||
         testSpecie.coordinate.y > 600) {
@@ -195,8 +196,11 @@ Specie outBoundaries(Specie specie) {
     return specie;
 }
 
-
-//Para dirigir la celula hacia la comida o algun punto
+/* Function: moveTowardsFood
+ * --------------------------
+ * Depending on the direction the specie has
+ * it will move towards a selected point
+ */
 Specie moveTowardsFood(Specie specie, int direction) {
     switch (direction) {
         case 1:
@@ -221,6 +225,10 @@ Specie moveTowardsFood(Specie specie, int direction) {
     return specie;
 }
 
+/* Function: printPopulation
+ * --------------------------
+ * Shows the evolutionary process with numbers on the terminal
+ */
 void printPopulation(Specie allSpecies[]) {
     for (int i = 0; i < POPULATION; i++) {
         printf("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", allSpecies[i].ID, allSpecies[i].speed, allSpecies[i].visibility,

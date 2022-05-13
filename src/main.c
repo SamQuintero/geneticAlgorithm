@@ -14,6 +14,7 @@ int main() {
     int amountOfFood;
     int extinction;
     int countFrames =0;
+    float volumen;
     Specie allspecies[100];
     food comida[MAP_FOOD];
 
@@ -23,19 +24,23 @@ int main() {
 
 
     InitWindow(1300, 600, "The Life");
+    InitAudioDevice();
     SetTargetFPS(20);
 
-    InitAudioDevice();
+
     Music musiquita = LoadMusicStream("../Assets/pou.mp3");
     Image cookie = LoadImage("../Assets/cookie4.png");
     ImageResize(&cookie, 100, 100);
     UnloadImage(cookie);
+
     Texture2D texture = LoadTextureFromImage(cookie);
 
+
     PlayMusicStream(musiquita);
+
     while (!WindowShouldClose()) {
 
-        float volumen = 1.0;
+        volumen = 1.0;
 
         PlayMusicStream(musiquita);
         SetMusicVolume(musiquita, volumen);
@@ -45,16 +50,17 @@ int main() {
 
         BeginDrawing();
 
-        //Dibuja la comida
+        //Draws the food
         amountOfFood = quantityOfFood(comida);
         for (int j = 0; j < MAP_FOOD; j++) {
             Vector2 position = {(float) comida[j].coordinate.x, (float) comida[j].coordinate.y};
-            //DrawCircle(comida[j].coordinate.x, comida[j].coordinate.y, comida[j].size / 2, RED);
             DrawTextureEx(texture, position, 0.0f, (float) comida[j].size / 50, WHITE);
         }
 
         checkIsRadious(allspecies, comida);
         Collision(allspecies, comida);
+
+        //Draws the species
         for (int i = 0; i < POPULATION; i++) {
             switch (allspecies[i].ID) {
                 case 1:
@@ -75,18 +81,19 @@ int main() {
         }
 
         countFrames++;
-        // Detecta cuando se acaba la comida o el periodo generacional para matar a las especies tontas
+
+        // Detects either when the food is over or the frame period is over.
         if (amountOfFood == MAP_FOOD || countFrames > 70) {
             countFrames = 0;
-            printf("Frames %d \n", countFrames);
             killSpecie(allspecies);
             AsexualReproduction(allspecies);
             maxSize = meanSizeSpecies(allspecies);
-            printf("Max %d: ", maxSize);
             createFoodPos(comida, maxSize);
-            printf("%d", POPULATION);
         }
+
         extinction = endOfWorld(allspecies);
+
+        //Checks if the size of at least one of the species is greater than the allowed and if there is only one specie left
         if(extinction>=70 && survivingSpecie(allspecies) == 0){
             UnloadTexture(texture);
             UnloadMusicStream(musiquita);
