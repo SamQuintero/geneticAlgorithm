@@ -2,6 +2,16 @@
 
 An implementation of a simple continuous genetic algorithm with C language.
 
+
+![2022-05-11 14 23 35](https://user-images.githubusercontent.com/53795904/167929758-4779f14f-ad22-4b51-926e-46c2e36a8f16.gif)
+
+> “One general law, leading to the advancement of all organic beings, namely, multiply, vary, let the strongest live and the weakest die.”
+― Charles Darwin, The Origin of Species
+
+
+This genetic algorithm implementation explores simulating the process of evolution in an ecosystem of non-intelligent and instict-based beings. The objects that move about the screen meet each other, reproduce asexually, and pass their genes on to a new generation. The previous ensures the continuation of fittest of all beings and their evolution.
+
+
 ## Installation
 
 
@@ -13,7 +23,7 @@ The repository needs to be downloaded or cloned to a location accessible to you.
 git clone https://github.com/haik-x/geneticAlgorithm.git
 ```
 
-## Assumptions for the species
+## Assumptions
 
 * Species do not harm each other.
 * Food is a limited resource and it expires.
