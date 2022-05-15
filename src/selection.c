@@ -6,11 +6,18 @@
 #include "../headers/globals.h"
 #include "stdlib.h"
 
-//Detecta si la celula comió
+/* Function: Collision
+ * --------------------------
+ * Check if the specie coordinate is the same as its
+ * closest food or if its edges are in the same
+ * range of space, then find which food was and switch
+ * the coordinates to high negatives, avoiding the
+ * species continue looking for them
+ *
+ */
 void Collision(Specie allSpecies[], food comida[]) {
 
     for (int i = 0; i < POPULATION; i++) {
-        printf("This is the extension %d %d %d\n", i, allSpecies[i].size/2, allSpecies[i].coordinate.x + allSpecies[i].size/2);
         if (allSpecies[i].coordinate.x == allSpecies[i].closestFood.coordinate.x &&
             allSpecies[i].coordinate.y == allSpecies[i].closestFood.coordinate.y ||
             allSpecies[i].coordinate.x - allSpecies[i].size/2  <= allSpecies[i].closestFood.coordinate.x &&
@@ -34,7 +41,13 @@ void Collision(Specie allSpecies[], food comida[]) {
     }
 }
 
-//Id 3 es la especie del más allá estas species ya pasaron en mejor vida
+/* Function: KillSpecie
+ * --------------------------
+ * The function evaluates if the species ate
+ * at least one food if doesn´t it gives a new
+ * id to identify it
+ */
+
 void killSpecie(Specie allSpecies[]) {
     for (int i = 0; i < POPULATION; i++) {
         if (allSpecies[i].fat == 0) {
@@ -42,28 +55,12 @@ void killSpecie(Specie allSpecies[]) {
         }
     }
 }
-
-//Las especies se reproducen de forma asexual
-void AsexualReproduction(Specie allSpecies[]) {
-    int survivor = graveyard(allSpecies);
-    int oldies = survivor;
-
-    for (int i = 0; i < oldies; i++) {
-        if (allSpecies[i].fat > 1) {
-            allSpecies[survivor] = allSpecies[i];
-            survivor++;
-        }
-    }
-    for (int i = 0; i < POPULATION; i++) {
-        allSpecies[i].fat = 0;
-    }
-    POPULATION = survivor;
-    printf(":(");
-    assignPos(allSpecies);
-    printf(":(");
-    mutation(allSpecies, oldies);
-
-}
+/* Function: graveyard
+ * --------------------------
+ * Rearrange the array with the survivor
+ * species on the top and who many of
+ * them are, return this integer
+ */
 
 //Recorre las especies muertas y contabiliza cuantas sobrevivieron
 int graveyard(Specie allSpecies[]) {
@@ -87,6 +84,39 @@ int graveyard(Specie allSpecies[]) {
     return count;
 }
 
+/* Function: AsexualReproduction
+ * --------------------------
+ * The function check which dude eat more
+ * than just one food an put a copy of this
+ * in the after all the alive species in the array.
+ * Update de population.
+ * Called the function which mutate
+ */
+void AsexualReproduction(Specie allSpecies[]) {
+    int survivor = graveyard(allSpecies);
+    int oldies = survivor;
+
+    for (int i = 0; i < oldies; i++) {
+        if (allSpecies[i].fat > 1) {
+            allSpecies[survivor] = allSpecies[i];
+            survivor++;
+        }
+    }
+    for (int i = 0; i < POPULATION; i++) {
+        allSpecies[i].fat = 0;
+    }
+    POPULATION = survivor;
+    assignPos(allSpecies);
+    mutation(allSpecies, oldies);
+
+}
+
+
+/* Function: assignPoss
+ * --------------------------
+ *  Reassign a coordinate to each sample
+ *  from the array when start a new generation
+ */
 void assignPos(Specie allSpecies[]) {
     for (int i = 0; i < POPULATION; i++) {
         allSpecies[i].coordinate.x = rand() % (1200 - 10 + 1) + 10;
@@ -94,6 +124,12 @@ void assignPos(Specie allSpecies[]) {
     }
 
 }
+/* Function: mutation
+ * --------------------------
+ *  Every sample have a fifty fifty chance
+ *  to mutate, in just one of its attributes
+ *  which are chosen randomly
+ */
 
 void mutation(Specie allSpecies[], int oldies) {
     for (int i = oldies; i < POPULATION; ++i) {
@@ -117,7 +153,12 @@ void mutation(Specie allSpecies[], int oldies) {
 
     }
 }
-
+/* Function: endOfWorld
+ * --------------------------
+ * The function check the size of
+ * every sample and return the larger,
+ * to evaluate the end condition.
+ */
 int endOfWorld(Specie allSpecies[]){
     int max=0;
     for (int i=0;i<POPULATION;i++){
@@ -129,6 +170,12 @@ int endOfWorld(Specie allSpecies[]){
     return max;
 }
 
+/* Function: survivingSpecie
+ * --------------------------
+ * The function check if is only one specie
+ * alive to evaluate the end condition, return
+ * 0 if this is true an 1 if doesn´t.
+ */
 int survivingSpecie(Specie allSpecies[]){
 
     int idCheck = allSpecies[0].ID;
