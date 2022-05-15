@@ -44,8 +44,8 @@ void Collision(Specie allSpecies[], food comida[]) {
 /* Function: KillSpecie
  * --------------------------
  * The function evaluates if the species ate
- * at least one food if doesn´t it gives a new
- * id to identify it
+ * at least one food if they didn't it gives a new
+ * id to identify they died.
  */
 
 void killSpecie(Specie allSpecies[]) {
@@ -58,8 +58,10 @@ void killSpecie(Specie allSpecies[]) {
 /* Function: graveyard
  * --------------------------
  * Rearrange the array with the survivor
- * species on the top and who many of
- * them are, return this integer
+ * species on the top and then counts how many of
+ * them are.
+ *
+ * Returns the new amount
  */
 
 //Recorre las especies muertas y contabiliza cuantas sobrevivieron
@@ -86,11 +88,11 @@ int graveyard(Specie allSpecies[]) {
 
 /* Function: AsexualReproduction
  * --------------------------
- * The function check which dude eat more
- * than just one food an put a copy of this
- * in the after all the alive species in the array.
+ * The function check which dude ate more
+ * than just one food and puts a copy of this
+ * after all the alive species in the array.
  * Update de population.
- * Called the function which mutate
+ * Called the function which mutates
  */
 void AsexualReproduction(Specie allSpecies[]) {
     int survivor = graveyard(allSpecies);
@@ -114,8 +116,8 @@ void AsexualReproduction(Specie allSpecies[]) {
 
 /* Function: assignPoss
  * --------------------------
- *  Reassign a coordinate to each sample
- *  from the array when start a new generation
+ *  Reassigns a coordinate to each sample
+ *  from the array when starts a new generation
  */
 void assignPos(Specie allSpecies[]) {
     for (int i = 0; i < POPULATION; i++) {
@@ -155,8 +157,8 @@ void mutation(Specie allSpecies[], int oldies) {
 }
 /* Function: endOfWorld
  * --------------------------
- * The function check the size of
- * every sample and return the larger,
+ * The function checks the size of
+ * every sample and returns the largest,
  * to evaluate the end condition.
  */
 int endOfWorld(Specie allSpecies[]){
@@ -172,9 +174,9 @@ int endOfWorld(Specie allSpecies[]){
 
 /* Function: survivingSpecie
  * --------------------------
- * The function check if is only one specie
+ * The function checks if there is only one specie
  * alive to evaluate the end condition, return
- * 0 if this is true an 1 if doesn´t.
+ * 0 if this is true an 1 if false.
  */
 int survivingSpecie(Specie allSpecies[]){
 

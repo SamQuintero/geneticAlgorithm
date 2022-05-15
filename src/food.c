@@ -5,7 +5,7 @@
 int MAP_FOOD=70;
 /* Function: createFoodPos
  * --------------------------
- * The function assign randomly a coordinate to each food
+ * The function assigns randomly a coordinate to each food
  * that will be in the map. The size it´s also given
  * randomly but the max size it can take is the mean
  * of the species size.
@@ -24,10 +24,10 @@ void createFoodPos(food arr[], int maxsize) {
 /* Function: quantityOfFood
  * --------------------------
  * The function check if the coordinates of
- * each food still positive numbers, this because
- * when the specie collides with the food, it´s
+ * each food are still positive numbers, this is because
+ * when the specie collide with the food, the food is
  * sent to the negatives.
- * The function returns the integer of food
+ * The function returns the amount of food
  * outside the map.
  *
  */
